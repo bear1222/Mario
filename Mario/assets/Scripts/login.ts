@@ -19,8 +19,23 @@ export default class login extends cc.Component {
         console.log("Password:");
 
         // handle login with firebase 
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(userCre => {
+            const user = userCre.user;
+            console.log("user:", user);
+            return user.uid;
+        })
+        .then(uid => {
+            let userList = firebase.database().ref('userList/' + uid + '/username');
+            userList.once('value', snapshot => {
+                console.log("username:", snapshot.val());
+            })
+        })
+        .then(() => {
+            cc.director.loadScene("level_select");
+        })
+        .catch(err => console.error(err));
 
-        cc.director.loadScene("level_select");
     }
 
     // update (dt) {}
