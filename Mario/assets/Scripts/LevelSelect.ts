@@ -1,16 +1,16 @@
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class level_select extends cc.Component {
 
     start () {
         let level1 = new cc.Component.EventHandler();
         let level2 = new cc.Component.EventHandler();
         level1.target = this.node;
-        level1.target = this.node;
+        level1.component = "level_select";
         level1.handler = "level1";
         level2.target = this.node;
-        level2.target = this.node;
+        level2.component = "level_select";
         level2.handler = "level2";
 
 
