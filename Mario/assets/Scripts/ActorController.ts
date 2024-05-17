@@ -25,12 +25,10 @@ export default class ActorController extends Controller {
     private _animation: cc.Animation = null;
     private _animState: cc.AnimationState = null;
     private _rigidbody: cc.RigidBody = null;
-    @property(cc.String)
-    idleAnimationName: string = "";
-    @property(cc.String)
-    moveAnimationName: string = "";
-    private _idleAnimState: cc.AnimationState = null;
-    private _moveAnimState: cc.AnimationState = null;
+    private physicManager: cc.PhysicsManager = null;
+    private idleFrame: cc.SpriteFrame = null;
+    @property(cc.Integer)
+    jumpVel: number = 0;
 
     @property(cc.Float)
     moveSpeed = 130;
@@ -40,11 +38,7 @@ export default class ActorController extends Controller {
         return new cc.Vec2(this.moveAxisX, this.moveAxisY);
     }
 
-    private _isJumping: boolean = false;
-    private _jumpStep: number = 0;
-    private _jumpTime: number = 0.5;
-    private _curJumpTime: number = 0;
-    private _curJumpSpeed: number = 0;
+    private fallDown: boolean = false;
 
 
     // LIFE-CYCLE CALLBACKS:
@@ -55,78 +49,94 @@ export default class ActorController extends Controller {
         this._rigidbody = this.node.getComponent(cc.RigidBody);
         if (!this._rigidbody) console.warn(`ActorController: Component cc.Rigidbody missing on node ${this.node.name}`);
         cc.director.getPhysicsManager().enabled = true;
-        this._rigidbody.gravityScale = 50;
+        this._rigidbody.gravityScale = 5;
+        this.physicManager = cc.director.getPhysicsManager();
+        this.physicManager.enabled = true;
+//        this.physicManager.gravity = cc.v2 (0, -200);
     }
 
     start() {
+        this.idleFrame = this.getComponent(cc.Sprite).spriteFrame;
         super.start();
-        this._idleAnimState = this._animation.getAnimationState(this.idleAnimationName);
-        this._moveAnimState = this._animation.getAnimationState(this.moveAnimationName);
-        this._animState = this._animation.play(this.idleAnimationName);
-
     }
-
 
     update(dt) {
         // Receive external input if available.
+        if(this.node.y < 0)
+            this.reset();
         if (this.inputSource) {
             this.moveAxisX = this.inputSource.horizontalAxis;
             this.moveAxisY = this.inputSource.verticalAxis;
-            if(this.inputSource.jumpPressed && !this._isJumping){
-                console.log("jumping!");
-        console.log("mass:", this.node.getComponent(cc.RigidBody).getMass());
-                this._isJumping = true;
-                this._jumpStep = JUMPSTEP;
-                this._curJumpTime = 0;
-                this._curJumpSpeed = 0;
-            }
+        }
+        if(this._rigidbody.linearVelocity.y != 0)
+            this.fallDown = true;
+        else
+            this.fallDown = false;
+
+
+        if(this.moveAxisX != 0){
+            this.node.x += this.moveSpeed * dt * this.moveAxisX;
+            this.node.scaleX = this.moveAxisX;
+        }
+//        if (!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)) {
+//            if (this._animState != this._moveAnimState) {
+//                this._animState = this._animation.play(this.moveAnimationName);
+//            }
+//        }
+//        else {
+//            if (this._animState != this._idleAnimState) {
+//                this._animState = this._animation.play(this.idleAnimationName);
+//            }
+//            
+//        }
+        if(this.inputSource && this.inputSource.jumpPressed){
+            this.playerJump(this.jumpVel);
         }
 
-        this._rigidbody.linearVelocity = this.moveAxis2D.mul(this.moveSpeed * dt);
-        if (!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)) {
-            if (this._animState != this._moveAnimState) {
-                this._animState = this._animation.play(this.moveAnimationName);
-            }
-            if (this.moveAxisX != 0) {
-                this.node.setScale(new cc.Vec2(
-                    // X
-                    this.initialFacingDirection == FacingDirection.Right ?
-                        sign(this.moveAxisX) :
-                        -sign(this.moveAxisX)
-                    ,
-                    // Y
-                    1
-                    )
-                );
-                
-            }
-
-        }
-        else {
-            if (this._animState != this._idleAnimState) {
-                this._animState = this._animation.play(this.idleAnimationName);
-            }
-            
-        }
-        const newPosition2D = new cc.Vec2(this.node.position.x, this.node.position.y).add(this._rigidbody.linearVelocity);
-        this.node.setPosition(newPosition2D);
-
-        if (this._isJumping) {
-            // Update current jump time
-            this._curJumpTime += dt;
-            if (this._curJumpTime < this._jumpTime) {
-                //TODO: make player jump
-//                this._rigidbody.applyLinearImpulse(new cc.Vec2(0, JUMPSTEP), this._rigidbody.getWorldCenter(), true);
-                this._curJumpSpeed = (1 - (this._curJumpTime / this._jumpTime)) * JUMPSTEP;
-                this._rigidbody.applyForceToCenter(new cc.Vec2(0, this._curJumpSpeed), true);
-
-            } else {
-                // Jump duration exceeded, end jump
-                this._isJumping = false;
-            }
-        }
+        this.playAnimiation();
+//        const newPosition2D = new cc.Vec2(this.node.position.x, this.node.position.y).add(this._rigidbody.linearVelocity);
+//        this.node.setPosition(newPosition2D);
 
     }
 
+    reset(){
+        this.node.setPosition(cc.v2(70, 40));
+    }
+
+    playerJump(vel: number){
+        if(!this.fallDown){
+            this._rigidbody.linearVelocity = cc.v2(0, vel);
+        }
+    }
+
+    onBeginContact(contact, self, other){
+        const type = other.node.name;
+        console.log("type:", type);
+        if(type == "ground"){
+            console.log(other.getComponent(cc.RigidBody).type);
+        }
+        if(type == "question_box"){
+
+        }
+    }
+
+    playAnimiation(){
+        if(!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)){
+            if(!this._animation.getAnimationState("jump_small").isPlaying){
+                this._animation.play("jump_small");
+            }
+        }else{
+            if(this.moveAxisX == 0){
+                this.getComponent(cc.Sprite).spriteFrame = this.idleFrame;
+                this._animation.stop();
+            }else if(!this._animation.getAnimationState("run_small").isPlaying){
+                this._animation.play("run_small");
+            }
+        }
+    }
+
+    sizeChange(){
+
+    }
     
 }
