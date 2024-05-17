@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "question_box",
+    "_name": "mushroom",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -27,16 +27,10 @@
       },
       {
         "__id__": 4
-      },
-      {
-        "__id__": 5
-      },
-      {
-        "__id__": 6
       }
     ],
     "_prefab": {
-      "__id__": 7
+      "__id__": 5
     },
     "_opacity": 255,
     "_color": {
@@ -60,8 +54,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -854.128,
-        -153.819,
+        -154.713,
+        -206.981,
         0,
         0,
         0,
@@ -69,7 +63,7 @@
         1,
         2,
         2,
-        0.5
+        1
       ]
     },
     "_eulerAngles": {
@@ -83,6 +77,40 @@
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.Sprite",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
+    "_spriteFrame": {
+      "__uuid__": "cb7a2de2-6351-4119-a6c9-48e67714be00"
+    },
+    "_type": 0,
+    "_sizeMode": 1,
+    "_fillType": 0,
+    "_fillCenter": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_fillStart": 0,
+    "_fillRange": 0,
+    "_isTrimmedMode": true,
+    "_atlas": {
+      "__uuid__": "8c06de4d-828d-4c2c-ad73-9749b1225cb5"
+    },
     "_id": ""
   },
   {
@@ -105,7 +133,7 @@
     },
     "_angularVelocity": 0,
     "_fixedRotation": false,
-    "enabledContactListener": true,
+    "enabledContactListener": false,
     "bullet": false,
     "awakeOnLoad": true,
     "_id": ""
@@ -120,7 +148,7 @@
     "_enabled": true,
     "tag": 0,
     "_density": 1,
-    "_sensor": false,
+    "_sensor": true,
     "_friction": 0.2,
     "_restitution": 0,
     "body": null,
@@ -134,79 +162,6 @@
       "width": 16,
       "height": 16
     },
-    "_id": ""
-  },
-  {
-    "__type__": "9e11aHIWt5MlLu/qZJRCCKm",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "coinBox": true,
-    "coinPrefab": {
-      "__uuid__": "2f047769-1d48-4f33-8888-3fcb8df60a43"
-    },
-    "endFrame": {
-      "__uuid__": "2a1af362-250a-4bd7-b1a7-91f0d215a64c"
-    },
-    "mushroomPrefab": {
-      "__uuid__": "536ed641-7e97-44dc-9416-aa13270df3ab"
-    },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.Sprite",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "_materials": [
-      {
-        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
-      }
-    ],
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "8f0fb2a6-76af-4365-ba2e-190378e884ad"
-    },
-    "_type": 0,
-    "_sizeMode": 1,
-    "_fillType": 0,
-    "_fillCenter": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_fillStart": 0,
-    "_fillRange": 0,
-    "_isTrimmedMode": true,
-    "_atlas": {
-      "__uuid__": "a4e4ebca-7fd4-4c5b-85a5-8fe96f4b92bc"
-    },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.Animation",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "_defaultClip": {
-      "__uuid__": "bebef395-62db-422d-9c0b-2230dfb9c41c"
-    },
-    "_clips": [
-      {
-        "__uuid__": "bebef395-62db-422d-9c0b-2230dfb9c41c"
-      }
-    ],
-    "playOnLoad": false,
     "_id": ""
   },
   {

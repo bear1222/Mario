@@ -18,20 +18,16 @@ const JUMPSTEP: number = 5500000;
  * Toggle "Use Player Input" to read from player input.
  */
 @ccclass
-export default class ActorController extends Controller {
+export default class MarioSmall extends Controller {
     @property({ type: cc.Enum(FacingDirection) })
     initialFacingDirection = FacingDirection.Right;
 
     private _animation: cc.Animation = null;
-    private _animState: cc.AnimationState = null;
     private _rigidbody: cc.RigidBody = null;
     private physicManager: cc.PhysicsManager = null;
     private idleFrame: cc.SpriteFrame = null;
-    private small: boolean = true;
     @property(cc.Integer)
     jumpVel: number = 0;
-    @property(cc.SpriteFrame)
-    bigFrame: cc.SpriteFrame = null;
 
     @property(cc.Float)
     moveSpeed = 130;
@@ -119,52 +115,22 @@ export default class ActorController extends Controller {
             console.log(other.getComponent(cc.RigidBody).type);
         }
         if(type == "mushroom"){
-            this.sizeChange(true);
             other.node.destroy();
         }
     }
 
     playAnimiation(){
-        if(this.small){
-            if(!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)){
-                if(!this._animation.getAnimationState("jump_small").isPlaying){
-                    this._animation.play("jump_small");
-                }
-            }else{
-                if(this.moveAxisX == 0){
-                    this.getComponent(cc.Sprite).spriteFrame = this.idleFrame;
-                    this._animation.stop();
-                }else if(!this._animation.getAnimationState("run_small").isPlaying){
-                    this._animation.play("run_small");
-                }
+        if(!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)){
+            if(!this._animation.getAnimationState("jump_small").isPlaying){
+                this._animation.play("jump_small");
             }
         }else{
-            if(!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)){
-                if(!this._animation.getAnimationState("jump_big").isPlaying){
-                    this._animation.play("jump_big");
-                }
-            }else{
-                if(this.moveAxisX == 0){
-                    this.getComponent(cc.Sprite).spriteFrame = this.bigFrame;
-                    this._animation.stop();
-                }else if(!this._animation.getAnimationState("run_big").isPlaying){
-                    this._animation.play("run_big");
-                }
+            if(this.moveAxisX == 0){
+                this.getComponent(cc.Sprite).spriteFrame = this.idleFrame;
+                this._animation.stop();
+            }else if(!this._animation.getAnimationState("run_small").isPlaying){
+                this._animation.play("run_small");
             }
-
         }
     }
-
-    sizeChange(becomeBig: boolean){
-        if(becomeBig){
-            this.small = false;
-            this.getComponent(cc.Sprite).spriteFrame = this.bigFrame;
-            this.getComponent(cc.PhysicsBoxCollider).size.height = 26;
-            console.log("become big");
-        }else{
-            this.getComponent(cc.Sprite).spriteFrame = this.idleFrame;
-            this.getComponent(cc.PhysicsBoxCollider).size.height = 16;
-        }
-    }
-    
 }

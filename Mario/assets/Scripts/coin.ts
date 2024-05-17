@@ -7,13 +7,9 @@ export default class Coin extends cc.Component {
     start(){
         this.anim = this.getComponent(cc.Animation);
 //        this.anim.play("coin").repeatCount = Infinity;
-        let action = cc.Action;
-        let easeRate:number = 0.5;
-//        let sequence = cc.sequence(cc.moveBy(1, 0, 100).easing(cc.easeInOut(easeRate)), cc.moveBy(1, 0, -100).easing(cc.easeInOut(easeRate)));
-        let sequence = cc.sequence(cc.moveBy(1, 0, 100).easing(cc.easeCubicActionOut()), cc.moveBy(1, 0, -100).easing(cc.easeCubicActionIn()));
-        action = sequence;
+        let sequence = cc.sequence(cc.moveBy(1, 0, 100).easing(cc.easeCubicActionOut()), cc.moveBy(0.8, 0, -100).easing(cc.easeCubicActionIn()));
         this.scheduleOnce(() => {
-            this.node.runAction(action);
+            this.node.runAction(sequence);
         }, 0);
 
     }
