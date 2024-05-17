@@ -12,11 +12,6 @@ function sign(x: number) {
     return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
 
-const JUMPSTEP: number = 5500000;
-/**
- * A component that implements movement and actions for each actor.
- * Toggle "Use Player Input" to read from player input.
- */
 @ccclass
 export default class ActorController extends Controller {
     @property({ type: cc.Enum(FacingDirection) })
@@ -26,10 +21,12 @@ export default class ActorController extends Controller {
     private _animState: cc.AnimationState = null;
     private _rigidbody: cc.RigidBody = null;
     private physicManager: cc.PhysicsManager = null;
-    private idleFrame: cc.SpriteFrame = null;
+    private physicsboxCollider: cc.PhysicsBoxCollider = null;
     private small: boolean = true;
     @property(cc.Integer)
     jumpVel: number = 0;
+    @property(cc.SpriteFrame)
+    smallFrame: cc.SpriteFrame = null;
     @property(cc.SpriteFrame)
     bigFrame: cc.SpriteFrame = null;
 
@@ -55,11 +52,11 @@ export default class ActorController extends Controller {
         this._rigidbody.gravityScale = 5;
         this.physicManager = cc.director.getPhysicsManager();
         this.physicManager.enabled = true;
+        this.physicsboxCollider = this.getComponent(cc.PhysicsBoxCollider);
 //        this.physicManager.gravity = cc.v2 (0, -200);
     }
 
     start() {
-        this.idleFrame = this.getComponent(cc.Sprite).spriteFrame;
         super.start();
     }
 
@@ -67,10 +64,12 @@ export default class ActorController extends Controller {
         // Receive external input if available.
         if(this.node.y < 0)
             this.reset();
+
         if (this.inputSource) {
             this.moveAxisX = this.inputSource.horizontalAxis;
             this.moveAxisY = this.inputSource.verticalAxis;
         }
+        
         if(this._rigidbody.linearVelocity.y != 0)
             this.fallDown = true;
         else
@@ -81,29 +80,17 @@ export default class ActorController extends Controller {
             this.node.x += this.moveSpeed * dt * this.moveAxisX;
             this.node.scaleX = this.moveAxisX;
         }
-//        if (!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)) {
-//            if (this._animState != this._moveAnimState) {
-//                this._animState = this._animation.play(this.moveAnimationName);
-//            }
-//        }
-//        else {
-//            if (this._animState != this._idleAnimState) {
-//                this._animState = this._animation.play(this.idleAnimationName);
-//            }
-//            
-//        }
         if(this.inputSource && this.inputSource.jumpPressed){
             this.playerJump(this.jumpVel);
         }
 
         this.playAnimiation();
-//        const newPosition2D = new cc.Vec2(this.node.position.x, this.node.position.y).add(this._rigidbody.linearVelocity);
-//        this.node.setPosition(newPosition2D);
 
     }
 
     reset(){
         this.node.setPosition(cc.v2(70, 40));
+        this.becomeBig(false);
     }
 
     playerJump(vel: number){
@@ -114,13 +101,27 @@ export default class ActorController extends Controller {
 
     onBeginContact(contact, self, other){
         const type = other.node.name;
-        console.log("type:", type);
+        const normal = contact.getWorldManifold().normal;
+        console.log("type:", type, normal.x);
         if(type == "ground"){
             console.log(other.getComponent(cc.RigidBody).type);
         }
         if(type == "mushroom"){
-            this.sizeChange(true);
             other.node.destroy();
+            this.becomeBig(true);
+        }
+        if(type == "Goomba"){
+            contact.disabled = true;
+            if(normal.x != 0){
+                console.log("player die");
+                if(this.small){
+                    // lose one life
+                }else{
+                    this.becomeBig(false);
+                }
+            }else{
+                this._rigidbody.linearVelocity = cc.v2(0, this.jumpVel);
+            }
         }
     }
 
@@ -132,7 +133,7 @@ export default class ActorController extends Controller {
                 }
             }else{
                 if(this.moveAxisX == 0){
-                    this.getComponent(cc.Sprite).spriteFrame = this.idleFrame;
+                    this.getComponent(cc.Sprite).spriteFrame = this.smallFrame;
                     this._animation.stop();
                 }else if(!this._animation.getAnimationState("run_small").isPlaying){
                     this._animation.play("run_small");
@@ -155,16 +156,16 @@ export default class ActorController extends Controller {
         }
     }
 
-    sizeChange(becomeBig: boolean){
+    becomeBig(becomeBig: boolean){
         if(becomeBig){
             this.small = false;
-            this.getComponent(cc.Sprite).spriteFrame = this.bigFrame;
-            this.getComponent(cc.PhysicsBoxCollider).size.height = 26;
+            this.physicsboxCollider.size.height = 26;
+            this.physicsboxCollider.apply();
             console.log("become big");
         }else{
-            this.getComponent(cc.Sprite).spriteFrame = this.idleFrame;
-            this.getComponent(cc.PhysicsBoxCollider).size.height = 16;
+            this.small = true;
+            this.physicsboxCollider.size.height = 16;
+            this.physicsboxCollider.apply();
         }
     }
-    
 }
