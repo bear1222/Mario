@@ -34,7 +34,7 @@ export default class signup extends cc.Component {
             userList.update({username: username, email: email});
         })
         .then(() => {
-            cc.director.loadScene("level_select");
+            cc.director.loadScene("levelSelect");
         })
         .catch(err => console.error(err));
 

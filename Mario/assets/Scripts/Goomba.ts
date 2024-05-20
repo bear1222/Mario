@@ -1,33 +1,51 @@
 const { ccclass, property } = cc._decorator;
+import ActorController from "./ActorController";
+import { GameManager } from "./GameManager";
+
+function cmp(a: number, b: number){
+    return (Math.abs(a - b) < 1e-3);
+}
 
 @ccclass
-export default class Coin extends cc.Component {
+export default class Goomba extends cc.Component {
     @property(cc.SpriteFrame)
     private dieFrame: cc.SpriteFrame = null;
 
     private direction: string = 'right';
+    private alive: boolean = true;
 
     @property(cc.Float)
-    moveSpeed = 65;
+    moveSpeed = 130;
     
+    @property(GameManager)
+    gameManager: GameManager = null;
+    @property(cc.Prefab)
+    addPointsPrefab: cc.Prefab = null;
+
     start(){
+
+    }
+    onLoad(){
         this.walk();
 
     }
     update(dt: number){
-        this.node.x += this.moveSpeed * dt * (this.direction == 'right' ? 1 : this.direction == 'stop' ? 0 : -1);
+        if(!this.gameManager.isStop())
+            this.node.x += this.moveSpeed * dt * (this.direction == 'right' ? 1 : this.direction == 'stop' ? 0 : -1);
     }
 
     onBeginContact(contact, self, other){
         const normal = contact.getWorldManifold().normal;
-        if(normal.x != 0 && (other.node.name == 'ground' || other.node.name == 'box_0')){
-            console.log('change dir');
+        if(!cmp(normal.x, 0) && (other.node.name == 'box_0')){
             this.direction = (this.direction == 'right' ? 'left' : 'right');
         }
         if(other.node.name == 'Player'){
-            if(normal.y != 0){
-                this.getComponent(cc.Sprite).spriteFrame = this.dieFrame;
+            if(!cmp(normal.y, 0) && other.getComponent(ActorController).isAlive()){
                 this.direction = 'stop';
+                this.getComponent(cc.Sprite).spriteFrame = this.dieFrame;
+                this.alive = false;
+
+                this.updatePoints(100, self.node.x, self.node.y + 16);
 
                 this.scheduleOnce(() => {
                     self.destroy();
@@ -38,7 +56,24 @@ export default class Coin extends cc.Component {
 
     walk(){
         this.schedule(() => {
-            this.node.scaleX = (this.node.scaleX == 1 ? -1 : 1);
+            if(!this.gameManager.isStop())
+                this.node.scaleX = (this.node.scaleX == 1 ? -2 : 2);
         }, 0.1);
+    }
+
+    updatePoints(dt, x, y){
+        this.gameManager.updatePoints(dt);
+
+        let addPoints = cc.instantiate(this.addPointsPrefab);
+        addPoints.setPosition(cc.v2(x, y));
+        addPoints.setScale(2, 2);
+        cc.find("Canvas/MapManager").addChild(addPoints);
+        this.scheduleOnce(() => {
+            addPoints.destroy();
+        }, 1);
+    }
+
+    isAlive(){
+        return this.alive;
     }
 }

@@ -1,9 +1,13 @@
 const {ccclass, property} = cc._decorator;
+import { GlobalManager } from "./GlobalManager";
 
 @ccclass
 export default class menu extends cc.Component {
 
     start () {
+        ////
+        GlobalManager.instance.gameStart(1);
+        ////
         let loginBtn = new cc.Component.EventHandler();
         let signupBtn = new cc.Component.EventHandler();
         loginBtn.target = this.node;
@@ -16,6 +20,8 @@ export default class menu extends cc.Component {
 
         cc.find("Canvas/loginBtn").getComponent(cc.Button).clickEvents.push(loginBtn);
         cc.find("Canvas/signupBtn").getComponent(cc.Button).clickEvents.push(signupBtn);
+
+        console.log(cc.find("Canvas/loginBtn").getComponent(cc.Button).clickEvents);
     }
 
     loadLoginScene(){

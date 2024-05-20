@@ -1,5 +1,8 @@
+import { GameManager } from "./GameManager";
 import Controller from "./input/Controller";
 import { IInputControls } from "./input/IInputControls";
+import question_box from "./question_box";
+import Goomba from "./Goomba";
 
 const { ccclass, property } = cc._decorator;
 
@@ -11,6 +14,9 @@ enum FacingDirection{
 function sign(x: number) {
     return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
+function cmp(a: number, b: number){
+    return (Math.abs(a - b) < 1e-3);
+}
 
 @ccclass
 export default class ActorController extends Controller {
@@ -18,20 +24,31 @@ export default class ActorController extends Controller {
     initialFacingDirection = FacingDirection.Right;
 
     private _animation: cc.Animation = null;
-    private _animState: cc.AnimationState = null;
     private _rigidbody: cc.RigidBody = null;
     private physicManager: cc.PhysicsManager = null;
     private physicsboxCollider: cc.PhysicsBoxCollider = null;
     private small: boolean = true;
-    @property(cc.Integer)
-    jumpVel: number = 0;
+    private alive: boolean = true;
+    private preJumpPressed: boolean = false;
+    private noHurt: boolean = false;
+
+    @property(GameManager)
+    gameManager: GameManager = null;
+
     @property(cc.SpriteFrame)
     smallFrame: cc.SpriteFrame = null;
     @property(cc.SpriteFrame)
     bigFrame: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame)
+    dieFrame: cc.SpriteFrame = null;
+    @property(cc.Prefab)
+    addPointsPrefab: cc.Prefab = null;
 
+    @property(cc.Integer)
+    jumpVel: number = 700;
     @property(cc.Float)
     moveSpeed = 130;
+
     public moveAxisX = 0;
     public moveAxisY = 0;
     public get moveAxis2D() {
@@ -62,13 +79,24 @@ export default class ActorController extends Controller {
 
     update(dt) {
         // Receive external input if available.
-        if(this.node.y < 0)
-            this.reset();
+        if(!this.isAlive()){
+            this.moveAxisX = this.moveAxisY = 0;
+        }
+        if(this.node.y < 0 && this.alive){
+            this.alive = false;
+            this.gameManager.playDieSE();
+            this.scheduleOnce(() => {
+                this.gameManager.die();
+                this.reset();
+            }, 2);
+        }
 
-        if (this.inputSource) {
+        if (this.inputSource && this.alive) {
             this.moveAxisX = this.inputSource.horizontalAxis;
             this.moveAxisY = this.inputSource.verticalAxis;
         }
+        if(this.gameManager.isStop())
+            this.moveAxisX = this.moveAxisY = 0;
         
         if(this._rigidbody.linearVelocity.y != 0)
             this.fallDown = true;
@@ -78,11 +106,12 @@ export default class ActorController extends Controller {
 
         if(this.moveAxisX != 0){
             this.node.x += this.moveSpeed * dt * this.moveAxisX;
-            this.node.scaleX = this.moveAxisX;
+            this.node.scaleX = this.moveAxisX * 2;
         }
-        if(this.inputSource && this.inputSource.jumpPressed){
+        if(!this.preJumpPressed && this.inputSource && this.inputSource.jumpPressed && this.alive && !this.gameManager.isStop()){
             this.playerJump(this.jumpVel);
         }
+        this.preJumpPressed = this.inputSource.jumpPressed;
 
         this.playAnimiation();
 
@@ -90,12 +119,14 @@ export default class ActorController extends Controller {
 
     reset(){
         this.node.setPosition(cc.v2(70, 40));
-        this.becomeBig(false);
+        this.small = true;
+//        this.becomeBig(false);
     }
 
     playerJump(vel: number){
         if(!this.fallDown){
             this._rigidbody.linearVelocity = cc.v2(0, vel);
+            this.gameManager.playJumpSE();
         }
     }
 
@@ -103,29 +134,61 @@ export default class ActorController extends Controller {
         const type = other.node.name;
         const normal = contact.getWorldManifold().normal;
         console.log("type:", type, normal.x);
-        if(type == "ground"){
-            console.log(other.getComponent(cc.RigidBody).type);
+        if(!this.alive){
+            contact.disabled = true;
+            return;
         }
         if(type == "mushroom"){
             other.node.destroy();
             this.becomeBig(true);
+            this.updatePoints(100, other.node.x, other.node.y + 16);
         }
         if(type == "Goomba"){
             contact.disabled = true;
-            if(normal.x != 0){
-                console.log("player die");
+            if(this.noHurt)
+                return;
+            if(!cmp(normal.x, 0) && other.getComponent(Goomba).isAlive()){
                 if(this.small){
                     // lose one life
+                    this.alive = false;
+                    this.moveAxisX = 0;
+
+                    this.getComponent(cc.Sprite).spriteFrame = this.dieFrame;
+                    
+
+                    this.gameManager.playDieSE();
+                    this.scheduleOnce(() => {
+                        if(!this.fallDown)
+                            this._rigidbody.linearVelocity = cc.v2(0, this.jumpVel);
+                        this.scheduleOnce(() => {
+                            this.gameManager.die();
+                        }, 1.5);
+                    }, 0.5);
                 }else{
+                    this.noHurt = true;
+                    this.scheduleOnce(() => {
+                        this.noHurt = false;
+                    }, 3);
                     this.becomeBig(false);
                 }
             }else{
                 this._rigidbody.linearVelocity = cc.v2(0, this.jumpVel);
+//                this.updatePoints(100, other.node.x, other.node.y + 32);
+                this.gameManager.playStompSE();
             }
+        }
+        if(type == "Flag"){
+            contact.disabled = true;
+            this.gameManager.playGameFinish();
         }
     }
 
     playAnimiation(){
+        if(!this.isAlive()){
+            this._animation.stop();
+            this.getComponent(cc.Sprite).spriteFrame = this.dieFrame;
+            return;
+        }
         if(this.small){
             if(!this._rigidbody.linearVelocity.fuzzyEquals(cc.Vec2.ZERO, 0.01)){
                 if(!this._animation.getAnimationState("jump_small").isPlaying){
@@ -161,11 +224,34 @@ export default class ActorController extends Controller {
             this.small = false;
             this.physicsboxCollider.size.height = 26;
             this.physicsboxCollider.apply();
-            console.log("become big");
+            this.blanking();
+            this.gameManager.playBecomeBigSE();
         }else{
             this.small = true;
             this.physicsboxCollider.size.height = 16;
             this.physicsboxCollider.apply();
+            this.blanking();
+            this.gameManager.playBecomeSmallSE();
         }
+    }
+
+    blanking(){
+        let action = cc.blink(1, 10);
+        this.node.runAction(action);
+    }
+
+    updatePoints(dt, x, y){
+        this.gameManager.updatePoints(dt);
+
+        let addPoints = cc.instantiate(this.addPointsPrefab);
+        addPoints.setPosition(cc.v2(x, y));
+        cc.find("Canvas/MapManager").addChild(addPoints);
+        this.scheduleOnce(() => {
+            addPoints.destroy();
+        }, 1);
+    }
+
+    isAlive(){
+        return this.alive;
     }
 }

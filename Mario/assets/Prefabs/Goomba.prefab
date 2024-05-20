@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "marioBig",
+    "_name": "Goomba",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -30,13 +30,10 @@
       },
       {
         "__id__": 5
-      },
-      {
-        "__id__": 6
       }
     ],
     "_prefab": {
-      "__id__": 7
+      "__id__": 6
     },
     "_opacity": 255,
     "_color": {
@@ -48,8 +45,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 14,
-      "height": 27
+      "width": 20,
+      "height": 24
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -60,15 +57,15 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        69.445,
-        45.574,
+        377.01,
+        43.866,
         0,
         0,
         0,
         0,
         1,
-        1,
-        1,
+        1.8,
+        1.8,
         1
       ]
     },
@@ -101,7 +98,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "c78a658a-0636-4a3c-abc3-7515fd8472aa"
+      "__uuid__": "7f788f3b-565d-4ff9-85ad-fc6fe9bdf01c"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -115,8 +112,24 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "6f725dbc-0d76-43f7-ad92-52f62c086dec"
+      "__uuid__": "fc300f8e-1866-4fdc-b08b-840049cad7b4"
     },
+    "_id": ""
+  },
+  {
+    "__type__": "09049byajdEE74yWjHWqIo9",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "dieFrame": {
+      "__uuid__": "1364467a-449c-469e-b289-b66f496b1992"
+    },
+    "moveSpeed": 65,
+    "gameManager": null,
+    "addPointsPrefab": null,
     "_id": ""
   },
   {
@@ -128,7 +141,7 @@
     },
     "_enabled": true,
     "_type": 2,
-    "_allowSleep": true,
+    "_allowSleep": false,
     "_gravityScale": 1,
     "_linearDamping": 0,
     "_angularDamping": 0,
@@ -161,46 +174,13 @@
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": -3.9
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 14,
-      "height": 27
+      "width": 16,
+      "height": 16
     },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.Animation",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "_defaultClip": null,
-    "_clips": [
-      {
-        "__uuid__": "396d97f8-48f5-462c-86dd-02a0e87dff00"
-      },
-      {
-        "__uuid__": "7e16cc3e-578b-4ceb-a936-e758bc34a691"
-      }
-    ],
-    "playOnLoad": false,
-    "_id": ""
-  },
-  {
-    "__type__": "faca2lJc7ZCbYg+csOm0myU",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "initialFacingDirection": 0,
-    "jumpVel": 700,
-    "moveSpeed": 130,
     "_id": ""
   },
   {

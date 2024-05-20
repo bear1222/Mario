@@ -32,7 +32,7 @@ export default class login extends cc.Component {
             })
         })
         .then(() => {
-            cc.director.loadScene("level_select");
+            cc.director.loadScene("levelSelect");
         })
         .catch(err => console.error(err));
 

@@ -1,30 +1,31 @@
 const {ccclass, property} = cc._decorator;
+import { GlobalManager } from "./GlobalManager";
 
 @ccclass
-export default class level_select extends cc.Component {
+export default class levelSelect extends cc.Component {
 
     start () {
-        let level1 = new cc.Component.EventHandler();
-        let level2 = new cc.Component.EventHandler();
-        level1.target = this.node;
-        level1.component = "level_select";
-        level1.handler = "level1";
-        level2.target = this.node;
-        level2.component = "level_select";
-        level2.handler = "level2";
+        let loginBtn = new cc.Component.EventHandler();
+        let signupBtn = new cc.Component.EventHandler();
+        loginBtn.target = this.node;
+        loginBtn.component = "levelSelect";
+        loginBtn.handler = "loadLoginScene";
+        signupBtn.target = this.node;
+        signupBtn.component = "levelSelect";
+        signupBtn.handler = "loadSignupScene";
 
 
-        cc.find("Canvas/level1").getComponent(cc.Button).clickEvents.push(level1);
-        cc.find("Canvas/level2").getComponent(cc.Button).clickEvents.push(level2);
+        cc.find("Canvas/Btn1").getComponent(cc.Button).clickEvents.push(loginBtn);
+        cc.find("Canvas/Btn2").getComponent(cc.Button).clickEvents.push(signupBtn);
+
     }
 
-    level1(){
-        cc.director.loadScene("game1");
+    loadLoginScene(){
+        GlobalManager.instance.gameStart(1);
     }
-    level2(){
-        cc.director.loadScene("game1");
+    loadSignupScene(){
+        GlobalManager.instance.gameStart(1);
     }
-
 
     // update (dt) {}
 }
