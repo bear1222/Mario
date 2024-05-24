@@ -13,6 +13,7 @@ export default class Goomba extends cc.Component {
 
     private direction: string = 'right';
     private alive: boolean = true;
+    private startMove: boolean = false;
 
     @property(cc.Float)
     moveSpeed = 130;
@@ -21,6 +22,8 @@ export default class Goomba extends cc.Component {
     gameManager: GameManager = null;
     @property(cc.Prefab)
     addPointsPrefab: cc.Prefab = null;
+    @property(cc.Node)
+    player: cc.Node = null;
 
     start(){
 
@@ -30,7 +33,9 @@ export default class Goomba extends cc.Component {
 
     }
     update(dt: number){
-        if(!this.gameManager.isStop())
+        if(!this.startMove && Math.abs(this.player.x - this.node.x) < 650)
+            this.startMove = true;
+        if(this.startMove && !this.gameManager.isStop())
             this.node.x += this.moveSpeed * dt * (this.direction == 'right' ? 1 : this.direction == 'stop' ? 0 : -1);
     }
 
@@ -57,7 +62,7 @@ export default class Goomba extends cc.Component {
     walk(){
         this.schedule(() => {
             if(!this.gameManager.isStop())
-                this.node.scaleX = (this.node.scaleX == 1 ? -2 : 2);
+                this.node.scaleX = (this.node.scaleX == 2 ? -2 : 2);
         }, 0.1);
     }
 

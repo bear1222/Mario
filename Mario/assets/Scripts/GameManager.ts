@@ -4,6 +4,8 @@ import { GlobalManager } from "./GlobalManager";
 
 @ccclass
 export class GameManager extends cc.Component {
+    @property(cc.Integer)
+    level: number = 1;
     @property(cc.AudioClip)
     bgm: cc.AudioClip = null;
     @property(cc.AudioClip)
@@ -71,7 +73,7 @@ export class GameManager extends cc.Component {
         this.time.getComponent(cc.Label).string = this.timeCnt.toString();
         this.coin.getComponent(cc.Label).string = this.coinCnt.toString();
         let s = this.pointsCnt.toString();
-        while (s.length < 7) s = '0' + s;
+        while (s.length < 6) s = '0' + s;
         this.points.getComponent(cc.Label).string = s;
     }
 
@@ -136,6 +138,7 @@ export class GameManager extends cc.Component {
             }
 //            this.gameFinish.getComponent(GameFinish).show(this.timeCnt, this.timeCnt * 50);
             this.updatePoints(this.timeCnt * 50);
+            gameFinishComponent.recordScore(this.level, this.lifeCnt, this.timeCnt, this.coinCnt, this.pointsCnt);
         }, 0.5);
         GlobalManager.instance.gameFinish();
     }
@@ -163,7 +166,7 @@ export class GameManager extends cc.Component {
     updatePoints(dt){
         this.pointsCnt += dt;
         let s = this.pointsCnt.toString();
-        while(s.length < 7) s = '0' + s;
+        while(s.length < 6) s = '0' + s;
         this.points.getComponent(cc.Label).string = s;
     }
 

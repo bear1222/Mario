@@ -1,4 +1,5 @@
 const {ccclass, property} = cc._decorator;
+import { GlobalManager } from "./GlobalManager";
 
 @ccclass
 export default class login extends cc.Component {
@@ -9,7 +10,17 @@ export default class login extends cc.Component {
         enterBtn.component = "login";
         enterBtn.handler = "clickEnter";
 
+        let xBtn = new cc.Component.EventHandler();
+        xBtn.target = this.node;
+        xBtn.component = 'login';
+        xBtn.handler = 'goBack';
+
         cc.find("Canvas/Form_background/Enter").getComponent(cc.Button).clickEvents.push(enterBtn);
+        cc.find("Canvas/Form_background/GoBack").getComponent(cc.Button).clickEvents.push(xBtn);
+    }
+
+    goBack(){
+        cc.director.loadScene("menu");
     }
 
     clickEnter(){
@@ -26,15 +37,10 @@ export default class login extends cc.Component {
             return user.uid;
         })
         .then(uid => {
-            let userList = firebase.database().ref('userList/' + uid + '/username');
-            userList.once('value', snapshot => {
-                console.log("username:", snapshot.val());
-            })
+            alert('Log in successfully!');
+            GlobalManager.instance.setUid(uid);
         })
-        .then(() => {
-            cc.director.loadScene("levelSelect");
-        })
-        .catch(err => console.error(err));
+        .catch(err => alert('log in fail, ' + err));
 
     }
 

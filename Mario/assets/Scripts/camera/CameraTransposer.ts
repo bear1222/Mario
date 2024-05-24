@@ -22,7 +22,7 @@ export default class CameraTransposer extends cc.Component {
     // @property(cc.Float)
     minX: number = 0;
     // @property(cc.Float)
-    minY: number = -120;
+    minY: number = 0; 
     // @property(cc.Float)
     maxX: number = 3000;
     // @property(cc.Float)
@@ -55,7 +55,7 @@ export default class CameraTransposer extends cc.Component {
         let targetPosition = cc.v2(transformed.x, transformed.y).add(cc.v2(-cc.view.getDesignResolutionSize().width / 2, -cc.view.getDesignResolutionSize().height / 2));
         targetPosition = cc.v2(
             clamp(this.followX ? targetPosition.x : this.node.position.x, this.minX, this.maxX),
-//            clamp(this.followY ? targetPosition.y : this.node.position.y, this.minY, this.maxY)
+            clamp(this.followY ? targetPosition.y : this.node.position.y, this.minY, this.maxY)
         );
         this.node.position = targetPosition;
     }

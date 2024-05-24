@@ -5,6 +5,14 @@
       "userList":{
           ".read": "auth != null", 
           ".write": "auth != null"
+      }, 
+      "bestScoreList1":{
+          ".read": "auth != null",
+          ".write":"auth != null"
+      },
+      "bestScoreList2":{
+          ".read": "auth != null",
+          ".write":"auth != null"
       }
   }
 }

@@ -47,7 +47,7 @@ export default class ActorController extends Controller {
     @property(cc.Integer)
     jumpVel: number = 700;
     @property(cc.Float)
-    moveSpeed = 130;
+    moveSpeed = 340;
 
     public moveAxisX = 0;
     public moveAxisY = 0;
@@ -69,6 +69,12 @@ export default class ActorController extends Controller {
         this._rigidbody.gravityScale = 5;
         this.physicManager = cc.director.getPhysicsManager();
         this.physicManager.enabled = true;
+
+        console.log('frame rate:', cc.game.getFrameRate());
+        console.log('gravity:', this.physicManager.gravity);
+        console.log('fix time step:', cc.PhysicsManager.FIXED_TIME_STEP);
+//        cc.game.setFrameRate(59);
+
         this.physicsboxCollider = this.getComponent(cc.PhysicsBoxCollider);
 //        this.physicManager.gravity = cc.v2 (0, -200);
     }
@@ -77,8 +83,10 @@ export default class ActorController extends Controller {
         super.start();
     }
 
+
     update(dt) {
-        // Receive external input if available.
+        const canJump = !this.preJumpPressed && this.inputSource.jumpPressed;
+        this.preJumpPressed = this.inputSource.jumpPressed;
         if(!this.isAlive()){
             this.moveAxisX = this.moveAxisY = 0;
         }
@@ -98,20 +106,20 @@ export default class ActorController extends Controller {
         if(this.gameManager.isStop())
             this.moveAxisX = this.moveAxisY = 0;
         
-        if(this._rigidbody.linearVelocity.y != 0)
+        if(this._rigidbody.linearVelocity.y > 0.01)
             this.fallDown = true;
         else
             this.fallDown = false;
 
 
         if(this.moveAxisX != 0){
-            this.node.x += this.moveSpeed * dt * this.moveAxisX;
+            this.node.x += this.moveSpeed * this.moveAxisX * dt;
             this.node.scaleX = this.moveAxisX * 2;
         }
-        if(!this.preJumpPressed && this.inputSource && this.inputSource.jumpPressed && this.alive && !this.gameManager.isStop()){
+        if(canJump && this.alive && !this.gameManager.isStop()){
             this.playerJump(this.jumpVel);
+            console.log('dt:', dt);
         }
-        this.preJumpPressed = this.inputSource.jumpPressed;
 
         this.playAnimiation();
 
@@ -142,6 +150,33 @@ export default class ActorController extends Controller {
             other.node.destroy();
             this.becomeBig(true);
             this.updatePoints(100, other.node.x, other.node.y + 16);
+        }
+        if(type == 'Flower'){
+            if(this.noHurt)
+                return;
+            if(this.small){
+                // lose one life
+                this.alive = false;
+                this.moveAxisX = 0;
+
+                this.getComponent(cc.Sprite).spriteFrame = this.dieFrame;
+                
+
+                this.gameManager.playDieSE();
+                this.scheduleOnce(() => {
+                    if(!this.fallDown)
+                        this._rigidbody.linearVelocity = cc.v2(0, this.jumpVel);
+                    this.scheduleOnce(() => {
+                        this.gameManager.die();
+                    }, 1.5);
+                }, 0.5);
+            }else{
+                this.noHurt = true;
+                this.scheduleOnce(() => {
+                    this.noHurt = false;
+                }, 3);
+                this.becomeBig(false);
+            }
         }
         if(type == "Goomba"){
             contact.disabled = true;
