@@ -60,6 +60,7 @@ export class GameManager extends cc.Component {
             if(this.updateTimer)
                 this.updateTime();
         }, 1);
+        this.stopAll = false;
     }
 
     update(){
@@ -73,7 +74,7 @@ export class GameManager extends cc.Component {
         this.time.getComponent(cc.Label).string = this.timeCnt.toString();
         this.coin.getComponent(cc.Label).string = this.coinCnt.toString();
         let s = this.pointsCnt.toString();
-        while (s.length < 6) s = '0' + s;
+        while (s.length < 5) s = '0' + s;
         this.points.getComponent(cc.Label).string = s;
     }
 
@@ -112,7 +113,8 @@ export class GameManager extends cc.Component {
     playGameStart(){
         if (GlobalManager.instance) {
             GlobalManager.instance.saveGameState(this.lifeCnt, this.timeCnt, this.coinCnt, this.pointsCnt);
-            GlobalManager.instance.loadSceneWithDelay("game1", 3);
+            const scene = 'game' + this.level;
+            GlobalManager.instance.loadSceneWithDelay(scene, 3);
         } else {
             console.error("GlobalManager instance is not available");
         }
@@ -166,7 +168,7 @@ export class GameManager extends cc.Component {
     updatePoints(dt){
         this.pointsCnt += dt;
         let s = this.pointsCnt.toString();
-        while(s.length < 6) s = '0' + s;
+        while(s.length < 5) s = '0' + s;
         this.points.getComponent(cc.Label).string = s;
     }
 

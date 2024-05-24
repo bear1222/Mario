@@ -16,63 +16,90 @@ export default class levelSelect extends cc.Component {
     @property(cc.Node)
     pointNode: cc.Node = null;
 
+    @property(cc.Node)
+    LB1: cc.Node = null;
+    @property(cc.Node)
+    LB2: cc.Node = null;
+
     private uid: number = -1;
     private username: string = '';
     private lastPlay = null;
 
     start () {
-        let loginBtn = new cc.Component.EventHandler();
-        let signupBtn = new cc.Component.EventHandler();
-        loginBtn.target = this.node;
-        loginBtn.component = "levelSelect";
-        loginBtn.handler = "loadLoginScene";
-        signupBtn.target = this.node;
-        signupBtn.component = "levelSelect";
-        signupBtn.handler = "loadSignupScene";
+        this.LB1.active = false;
+        this.LB2.active = false;
+        let Btn1 = new cc.Component.EventHandler();
+        let Btn2 = new cc.Component.EventHandler();
+        Btn1.target = this.node;
+        Btn1.component = "levelSelect";
+        Btn1.handler = "loadLoginScene";
+        Btn2.target = this.node;
+        Btn2.component = "levelSelect";
+        Btn2.handler = "loadSignupScene";
 
         let leaderBtn = new cc.Component.EventHandler();
         leaderBtn.target = this.node;
         leaderBtn.component = 'levelSelect';
-        leaderBtn.handler = "loadLeaderBoard";
+        leaderBtn.handler = "openLeaderBoard";
         let leaderBtn2 = new cc.Component.EventHandler();
         leaderBtn2.target = this.node;
         leaderBtn2.component = 'levelSelect';
-        leaderBtn2.handler = "loadLeaderBoard2";
+        leaderBtn2.handler = "openLeaderBoard2";
+
+        let xBtn = new cc.Component.EventHandler();
+        xBtn.target = this.node;
+        xBtn.component = 'levelSelect';
+        xBtn.handler = "closeLeaderBoard";
+        let xBtn2 = new cc.Component.EventHandler();
+        xBtn2.target = this.node;
+        xBtn2.component = 'levelSelect';
+        xBtn2.handler = "closeLeaderBoard2";
 
         let logoutBtn = new cc.Component.EventHandler();
         logoutBtn.target = this.node;
         logoutBtn.component = 'levelSelect';
         logoutBtn.handler = "logOut";
 
-        cc.find("Canvas/Btn1").getComponent(cc.Button).clickEvents.push(loginBtn);
-        cc.find("Canvas/Btn2").getComponent(cc.Button).clickEvents.push(signupBtn);
+        cc.find("Canvas/Btn1").getComponent(cc.Button).clickEvents.push(Btn1);
+        cc.find("Canvas/Btn2").getComponent(cc.Button).clickEvents.push(Btn2);
         cc.find("Canvas/LeaderBoardBtn").getComponent(cc.Button).clickEvents.push(leaderBtn);
         cc.find("Canvas/LeaderBoardBtn2").getComponent(cc.Button).clickEvents.push(leaderBtn2);
         cc.find("Canvas/LogOutBtn").getComponent(cc.Button).clickEvents.push(logoutBtn);
+        cc.find("Canvas/wrap1/GoBack").getComponent(cc.Button).clickEvents.push(xBtn);
+        cc.find("Canvas/wrap2/GoBack").getComponent(cc.Button).clickEvents.push(xBtn2);
 
+    }
+
+    update(){
         const info = GlobalManager.instance.getInfo();
         this.uid = info.uid;
         this.lastPlay = info.lastPlay;
         this.username = info.username;
-        console.log('info:', info);
+//        console.log('info:', info);
         if(info.finish){
             cc.find("Canvas/Btn2").getComponent(cc.Button).interactable = true;
         }
-
         this.setHeaderNode();
+
     }
 
     loadLoginScene(){
         GlobalManager.instance.gameStart(1);
     }
     loadSignupScene(){
-        GlobalManager.instance.gameStart(1);
+        GlobalManager.instance.gameStart(2);
     }
-    loadLeaderBoard(){
-        cc.director.loadScene('leaderBoard');
+    openLeaderBoard(){
+        this.LB1.active = true;
     }
-    loadLeaderBoard2(){
-        cc.director.loadScene('leaderBoard2');
+    openLeaderBoard2(){
+        this.LB2.active = true;
+    }
+    closeLeaderBoard(){
+        this.LB1.active = false;
+    }
+    closeLeaderBoard2(){
+        this.LB2.active = false;
     }
     logOut(){
         firebase.auth().signOut()
@@ -92,7 +119,7 @@ export default class levelSelect extends cc.Component {
         let point = this.lastPlay.point.toString();
         while(time.length < 3)
             time = '0' + time;
-        while(point.length < 6)
+        while(point.length < 5)
             point = '0' + point;
         console.log('username:', username);
         console.log('levevl:', level);

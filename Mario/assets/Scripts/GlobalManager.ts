@@ -101,6 +101,9 @@ export class GlobalManager extends cc.Component {
     getUid(){
         return this.uid;
     }
+    setUsername(name){
+        this.username = name;
+    }
     getFinish(uid){
         return new Promise((resolve, reject) => {
             if (uid === '') {
@@ -119,6 +122,10 @@ export class GlobalManager extends cc.Component {
     getUsername(uid){
         console.log("uid:", uid);
         return new Promise((resolve, reject) => {
+            if(this.username != ''){
+                resolve();
+                return;
+            }
             if (uid === '') {
                 reject('UID is empty');
                 return;

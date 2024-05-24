@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="1">
+ <editorsettings>
+  <export target="level2.tmx" format="tmx"/>
+ </editorsettings>
  <tileset firstgid="1" name="tileset" tilewidth="16" tileheight="16" tilecount="1204" columns="43">
   <image source="../effects_UI_tiles/tileset.png" width="688" height="450"/>
  </tileset>

@@ -43,10 +43,11 @@ export default class signup extends cc.Component {
         .then(uid => {
             let userList = firebase.database().ref('userList/' + uid);
             userList.update({username: username, email: email});
+            GlobalManager.instance.setUid(uid);
+            GlobalManager.instance.setUsername(username);
         })
         .then((uid) => {
             alert('Sign up successfully!');
-            GlobalManager.instance.setUid(uid);
         })
         .catch(err => alert('log in fail, ' + err));
 

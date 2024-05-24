@@ -6,7 +6,7 @@ export default class menu extends cc.Component {
 
     start () {
         ////
-//        GlobalManager.instance.gameStart(1);
+//        GlobalManager.instance.gameStart(2);
         ////
         let loginBtn = new cc.Component.EventHandler();
         let signupBtn = new cc.Component.EventHandler();

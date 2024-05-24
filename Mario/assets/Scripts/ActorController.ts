@@ -77,6 +77,7 @@ export default class ActorController extends Controller {
 
         this.physicsboxCollider = this.getComponent(cc.PhysicsBoxCollider);
 //        this.physicManager.gravity = cc.v2 (0, -200);
+        this.alive = true;
     }
 
     start() {
@@ -106,7 +107,7 @@ export default class ActorController extends Controller {
         if(this.gameManager.isStop())
             this.moveAxisX = this.moveAxisY = 0;
         
-        if(this._rigidbody.linearVelocity.y > 0.01)
+        if(this._rigidbody.linearVelocity.y != 0)
             this.fallDown = true;
         else
             this.fallDown = false;
@@ -141,7 +142,7 @@ export default class ActorController extends Controller {
     onBeginContact(contact, self, other){
         const type = other.node.name;
         const normal = contact.getWorldManifold().normal;
-        console.log("type:", type, normal.x);
+        console.log("type:", type, normal.x, this.alive);
         if(!this.alive){
             contact.disabled = true;
             return;
@@ -288,5 +289,8 @@ export default class ActorController extends Controller {
 
     isAlive(){
         return this.alive;
+    }
+    isJumping(){
+        return this.fallDown;
     }
 }

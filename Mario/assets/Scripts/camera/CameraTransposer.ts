@@ -24,9 +24,9 @@ export default class CameraTransposer extends cc.Component {
     // @property(cc.Float)
     minY: number = 0; 
     // @property(cc.Float)
-    maxX: number = 3000;
+    maxX: number = 5000;
     // @property(cc.Float)
-    maxY: number = 120;
+    maxY: number = 1000;
     // @property(cc.Float)
     offsetX: number = 0;
     // @property(cc.Float)

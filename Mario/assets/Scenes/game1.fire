@@ -1730,9 +1730,7 @@
     "root": {
       "__id__": 39
     },
-    "asset": {
-      "__uuid__": "bb587dca-0a5e-4df8-8dbe-2873410e1a4c"
-    },
+    "asset": null,
     "fileId": "",
     "sync": false
   },
