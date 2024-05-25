@@ -32,10 +32,10 @@ export default class levelSelect extends cc.Component {
         let Btn2 = new cc.Component.EventHandler();
         Btn1.target = this.node;
         Btn1.component = "levelSelect";
-        Btn1.handler = "loadLoginScene";
+        Btn1.handler = "loadLevel1Scene";
         Btn2.target = this.node;
         Btn2.component = "levelSelect";
-        Btn2.handler = "loadSignupScene";
+        Btn2.handler = "loadLevel2Scene";
 
         let leaderBtn = new cc.Component.EventHandler();
         leaderBtn.target = this.node;
@@ -83,11 +83,25 @@ export default class levelSelect extends cc.Component {
 
     }
 
-    loadLoginScene(){
+    loadLevel1Scene(){
         GlobalManager.instance.gameStart(1);
+        const uid = GlobalManager.instance.getUid();
+        let userList = firebase.database().ref('userList/' + uid + '/lastPlay1');
+        userList.once('value')
+        .then((snapshot) => {
+            const info = snapshot.val() || {life: 5, time: 300, coin: 0, point: 0};
+            GlobalManager.instance.saveGameState(info.life, info.time, info.coin, info.point);
+        })
     }
-    loadSignupScene(){
+    loadLevel2Scene(){
         GlobalManager.instance.gameStart(2);
+        const uid = GlobalManager.instance.getUid();
+        let userList = firebase.database().ref('userList/' + uid + '/lastPlay2');
+        userList.once('value')
+        .then((snapshot) => {
+            const info = snapshot.val() || {life: 5, time: 300, coin: 0, point: 0};
+            GlobalManager.instance.saveGameState(info.life, info.time, info.coin, info.point);
+        })
     }
     openLeaderBoard(){
         this.LB1.active = true;
@@ -121,9 +135,9 @@ export default class levelSelect extends cc.Component {
             time = '0' + time;
         while(point.length < 5)
             point = '0' + point;
-        console.log('username:', username);
-        console.log('levevl:', level);
-        console.log('life:', life);
+//        console.log('username:', username);
+//        console.log('levevl:', level);
+//        console.log('life:', life);
 
         this.usernameNode.getComponent(cc.RichText).string = "<outline color=black>" + username + "</outline>";
         this.levelNode.getComponent(cc.Label).string = level;

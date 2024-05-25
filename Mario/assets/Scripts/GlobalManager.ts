@@ -4,13 +4,15 @@ const {ccclass, property} = cc._decorator;
 export class GlobalManager extends cc.Component {
     static instance: GlobalManager = null;
 
+    private level: number = 0;
+
     lifeCnt: number = 5;
     timeCnt: number = 300;
     coinCnt: number = 0;
     pointsCnt: number = 0;
 
     private uid: number = -1;
-    private finish: boolean = 0;
+    private finish: boolean = false;
     private username: string = '';
     private lastPlay = null;
     private records1 = null;
@@ -19,6 +21,12 @@ export class GlobalManager extends cc.Component {
     @property(cc.AudioClip)
     bgm: cc.AudioClip = null;
 
+    setLevel(lv: number){
+        this.level = lv;
+    }
+    getLevel(){
+        return this.level;
+    }
 
     onLoad() {
         if (GlobalManager.instance === null) {

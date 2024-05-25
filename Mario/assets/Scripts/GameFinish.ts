@@ -67,8 +67,20 @@ export default class GameFinish extends cc.Component {
             } else {
                 console.log("didn't log in");
             }
-          });
-
+        });
+    }
+    recordState(level: number, life: number, time: number, coin: number, point: number){
+        console.log("record:", life, time, coin, point);
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log(user.uid);
+                const uid = user.uid;
+                let userList = firebase.database().ref('userList/' + uid + '/lastPlay' + level);
+                userList.update({level: level, life: life, time: time, coin: coin, point: point});
+            } else {
+                console.log("didn't log in");
+            }
+        });
     }
 
 }

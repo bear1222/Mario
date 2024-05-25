@@ -46,6 +46,7 @@ export class GameManager extends cc.Component {
     private stopAll: boolean = false;
 
     start() {
+        console.log('start gameManager');
         if (GlobalManager.instance) {
             const state = GlobalManager.instance.restoreGameState();
             this.lifeCnt = state.lifeCnt;
@@ -111,19 +112,14 @@ export class GameManager extends cc.Component {
     }
 
     playGameStart(){
-        if (GlobalManager.instance) {
-            GlobalManager.instance.saveGameState(this.lifeCnt, this.timeCnt, this.coinCnt, this.pointsCnt);
-            const scene = 'game' + this.level;
-            GlobalManager.instance.loadSceneWithDelay(scene, 3);
-        } else {
-            console.error("GlobalManager instance is not available");
-        }
-
-        cc.director.loadScene("game_start");
+        GlobalManager.instance.setLevel(this.level);
+        GlobalManager.instance.saveGameState(this.lifeCnt, this.timeCnt, this.coinCnt, this.pointsCnt);
+        cc.director.loadScene('stop');
     }
     playGameOver(){
         this.playGameoverSE();
         GlobalManager.instance.gameOver();
+        this.gameFinish.getComponent(GameFinish).recordState(this.level, 5, 300, 0, 0);
     }
     playGameFinish(){
         console.log('playGameFinish');
@@ -141,6 +137,7 @@ export class GameManager extends cc.Component {
 //            this.gameFinish.getComponent(GameFinish).show(this.timeCnt, this.timeCnt * 50);
             this.updatePoints(this.timeCnt * 50);
             gameFinishComponent.recordScore(this.level, this.lifeCnt, this.timeCnt, this.coinCnt, this.pointsCnt);
+            gameFinishComponent.recordState(this.level, 5, 300, 0, 0);
         }, 0.5);
         GlobalManager.instance.gameFinish();
     }

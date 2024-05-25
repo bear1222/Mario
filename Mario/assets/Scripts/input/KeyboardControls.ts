@@ -27,6 +27,11 @@ export default class KeyboardControls
     private jump_pressed: boolean = false;
     public get jumpPressed(): boolean {return this.jump_pressed}
 
+    private down_pressed: boolean = false;
+    public get downPressed(): boolean {return this.down_pressed}
+
+    private enter_pressed: boolean = false;
+    public get enterPressed(): boolean {return this.enter_pressed}
 
     private _zKey: ButtonState = ButtonState.Rest;
     public get attack(): ButtonState { return this._zKey }
@@ -63,6 +68,12 @@ export default class KeyboardControls
                 break;
             case cc.macro.KEY.up:
                 this.jump_pressed = true;
+                break;
+            case cc.macro.KEY.down:
+                this.down_pressed = true;
+                break;
+            case cc.macro.KEY.enter:
+                this.enter_pressed = true;
                 break;
         }
         this._vAxis = clamp(this._vAxis);
@@ -101,6 +112,12 @@ export default class KeyboardControls
                 break;
             case cc.macro.KEY.up:
                 this.jump_pressed = false;
+                break;
+            case cc.macro.KEY.down:
+                this.down_pressed = false;
+                break;
+            case cc.macro.KEY.enter:
+                this.enter_pressed = false;
                 break;
         }
         this._vAxis = clamp(this._vAxis);

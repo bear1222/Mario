@@ -21,7 +21,9 @@ export interface IInputControls {
     readonly verticalAxis: Axis1D;
     readonly attack: ButtonState;
     readonly interact: ButtonState;
-    readonly jumpPressed: boolean
+    readonly jumpPressed: boolean;
+    readonly downPressed: boolean;
+    readonly enterPressed: boolean;
 }
 
 export function hasImplementedInputControls(obj: any): obj is IInputControls{
@@ -30,5 +32,7 @@ export function hasImplementedInputControls(obj: any): obj is IInputControls{
     (obj.verticalAxis !== undefined) &&
     (obj.attack !== undefined) &&
     (obj.interact !== undefined) &&
-    (obj.jumpPressed !== undefined)
+    (obj.jumpPressed !== undefined) &&
+    (obj.downPressed !== undefined) &&
+    (obj.enterPressed !== undefined) 
 }
