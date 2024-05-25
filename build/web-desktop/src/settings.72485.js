@@ -1,1 +1,0 @@
-window._CCSettings={platform:"web-desktop",groupList:["default"],collisionMatrix:[[true]],hasResourcesBundle:false,hasStartSceneBundle:false,remoteBundles:[],subpackages:[],launchScene:"db://assets/Scenes/menu.fire",orientation:"",jsList:["assets/Scripts/firebase.3e81a.js"],bundleVers:{internal:"d17e2",main:"4b89f"}};

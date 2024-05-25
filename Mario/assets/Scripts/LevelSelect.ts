@@ -5,29 +5,27 @@ import { GlobalManager } from "./GlobalManager";
 export default class levelSelect extends cc.Component {
     @property(cc.Node)
     usernameNode: cc.Node = null;
-    @property(cc.Node)
-    levelNode: cc.Node = null;
-    @property(cc.Node)
-    lifeNode: cc.Node = null;
-    @property(cc.Node)
-    timeNode: cc.Node = null;
-    @property(cc.Node)
-    coinNode: cc.Node = null;
-    @property(cc.Node)
-    pointNode: cc.Node = null;
 
     @property(cc.Node)
     LB1: cc.Node = null;
     @property(cc.Node)
     LB2: cc.Node = null;
 
+    @property(cc.Node)
+    YN1: cc.Node = null;
+    @property(cc.Node)
+    YN2: cc.Node = null;
+
     private uid: number = -1;
     private username: string = '';
     private lastPlay = null;
 
     start () {
+        GlobalManager.instance.playBGM();
         this.LB1.active = false;
         this.LB2.active = false;
+        this.YN1.active = false;
+        this.YN2.active = false;
         let Btn1 = new cc.Component.EventHandler();
         let Btn2 = new cc.Component.EventHandler();
         Btn1.target = this.node;
@@ -55,6 +53,24 @@ export default class levelSelect extends cc.Component {
         xBtn2.component = 'levelSelect';
         xBtn2.handler = "closeLeaderBoard2";
 
+        let yes1Btn = new cc.Component.EventHandler();
+        yes1Btn.target = this.node;
+        yes1Btn.component = 'levelSelect';
+        yes1Btn.handler = "readOld1";
+        let yes2Btn = new cc.Component.EventHandler();
+        yes2Btn.target = this.node;
+        yes2Btn.component = 'levelSelect';
+        yes2Btn.handler = "readOld2";
+        let no1Btn = new cc.Component.EventHandler();
+        no1Btn.target = this.node;
+        no1Btn.component = 'levelSelect';
+        no1Btn.handler = "reStart1";
+        let no2Btn = new cc.Component.EventHandler();
+        no2Btn.target = this.node;
+        no2Btn.component = 'levelSelect';
+        no2Btn.handler = "reStart2";
+
+
         let logoutBtn = new cc.Component.EventHandler();
         logoutBtn.target = this.node;
         logoutBtn.component = 'levelSelect';
@@ -67,6 +83,10 @@ export default class levelSelect extends cc.Component {
         cc.find("Canvas/LogOutBtn").getComponent(cc.Button).clickEvents.push(logoutBtn);
         cc.find("Canvas/wrap1/GoBack").getComponent(cc.Button).clickEvents.push(xBtn);
         cc.find("Canvas/wrap2/GoBack").getComponent(cc.Button).clickEvents.push(xBtn2);
+        cc.find("Canvas/YN1/YES1").getComponent(cc.Button).clickEvents.push(yes1Btn);
+        cc.find("Canvas/YN1/NO1").getComponent(cc.Button).clickEvents.push(no1Btn);
+        cc.find("Canvas/YN2/YES2").getComponent(cc.Button).clickEvents.push(yes2Btn);
+        cc.find("Canvas/YN2/NO2").getComponent(cc.Button).clickEvents.push(no2Btn);
 
     }
 
@@ -84,24 +104,10 @@ export default class levelSelect extends cc.Component {
     }
 
     loadLevel1Scene(){
-        GlobalManager.instance.gameStart(1);
-        const uid = GlobalManager.instance.getUid();
-        let userList = firebase.database().ref('userList/' + uid + '/lastPlay1');
-        userList.once('value')
-        .then((snapshot) => {
-            const info = snapshot.val() || {life: 5, time: 300, coin: 0, point: 0};
-            GlobalManager.instance.saveGameState(info.life, info.time, info.coin, info.point);
-        })
+        this.YN1.active = true;
     }
     loadLevel2Scene(){
-        GlobalManager.instance.gameStart(2);
-        const uid = GlobalManager.instance.getUid();
-        let userList = firebase.database().ref('userList/' + uid + '/lastPlay2');
-        userList.once('value')
-        .then((snapshot) => {
-            const info = snapshot.val() || {life: 5, time: 300, coin: 0, point: 0};
-            GlobalManager.instance.saveGameState(info.life, info.time, info.coin, info.point);
-        })
+        this.YN2.active = true;
     }
     openLeaderBoard(){
         this.LB1.active = true;
@@ -115,6 +121,20 @@ export default class levelSelect extends cc.Component {
     closeLeaderBoard2(){
         this.LB2.active = false;
     }
+
+    readOld1(){
+        this.loadOldRecord(1);
+    }
+    readOld2(){
+        this.loadOldRecord(2);
+    }
+    reStart1(){
+        this.restart(1);
+    }
+    reStart2(){
+        this.restart(2);
+    }
+
     logOut(){
         firebase.auth().signOut()
         .then(() => {
@@ -124,27 +144,27 @@ export default class levelSelect extends cc.Component {
         .catch(err => alert('log in fail, ' + err));
     }
 
+    restart(level){
+        GlobalManager.instance.gameStart(level);
+        const info = {life: 5, time: 300, coin: 0, point: 0};
+        GlobalManager.instance.saveGameState(info.life, info.time, info.coin, info.point);
+
+    }
+    loadOldRecord(level){
+        GlobalManager.instance.gameStart(level);
+        const uid = GlobalManager.instance.getUid();
+        let userList = firebase.database().ref('userList/' + uid + '/lastPlay' + level);
+        userList.once('value')
+        .then((snapshot) => {
+            const info = snapshot.val() || {life: 5, time: 300, coin: 0, point: 0};
+            GlobalManager.instance.saveGameState(info.life, info.time, info.coin, info.point);
+        })
+
+    }
+
     setHeaderNode(){
         const username = this.username;
-        const level = this.lastPlay.level;
-        const life = this.lastPlay.life;
-        let time = this.lastPlay.time.toString();
-        const coin = this.lastPlay.coin;
-        let point = this.lastPlay.point.toString();
-        while(time.length < 3)
-            time = '0' + time;
-        while(point.length < 5)
-            point = '0' + point;
-//        console.log('username:', username);
-//        console.log('levevl:', level);
-//        console.log('life:', life);
-
         this.usernameNode.getComponent(cc.RichText).string = "<outline color=black>" + username + "</outline>";
-        this.levelNode.getComponent(cc.Label).string = level;
-        this.lifeNode.getComponent(cc.Label).string = life;
-        this.timeNode.getComponent(cc.Label).string = time;
-        this.coinNode.getComponent(cc.Label).string = coin;
-        this.pointNode.getComponent(cc.Label).string = point;
     }
     // update (dt) {}
 }

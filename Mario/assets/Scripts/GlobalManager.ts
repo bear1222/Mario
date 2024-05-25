@@ -92,7 +92,10 @@ export class GlobalManager extends cc.Component {
     }
 
     playBGM(){
-        cc.audioEngine.playMusic(this.bgm, true);
+        if(!cc.audioEngine.isMusicPlaying())
+            cc.audioEngine.playMusic(this.bgm, true);
+        else
+            console.log('isplaying');
     }
     stopBGM(){
         cc.audioEngine.stopMusic();
