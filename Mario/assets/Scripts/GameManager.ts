@@ -21,7 +21,6 @@ export class GameManager extends cc.Component {
     @property(cc.AudioClip)
     becomeSmallSE: cc.AudioClip = null;
     @property(cc.AudioClip)
-    @property(cc.AudioClip)
     gameoverSE: cc.AudioClip = null;
     @property(cc.AudioClip)
     gameFinishSE: cc.AudioClip = null;

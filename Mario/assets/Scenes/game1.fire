@@ -1306,7 +1306,8 @@
     "dieFrame": {
       "__uuid__": "1364467a-449c-469e-b289-b66f496b1992"
     },
-    "moveSpeed": 130,
+    "direction": "right",
+    "moveSpeed": 65,
     "gameManager": {
       "__id__": 3
     },
@@ -1498,6 +1499,7 @@
     "dieFrame": {
       "__uuid__": "1364467a-449c-469e-b289-b66f496b1992"
     },
+    "direction": "right",
     "moveSpeed": 65,
     "gameManager": {
       "__id__": 3
@@ -1814,7 +1816,7 @@
     "tag": 0,
     "_density": 100,
     "_sensor": false,
-    "_friction": 0.2,
+    "_friction": 0,
     "_restitution": 0,
     "body": null,
     "_offset": {
@@ -1899,7 +1901,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "e38f4302-5da5-402d-b97c-569bdc7679a8"
+      "__uuid__": "f75fac7f-e79c-48e1-ad6e-45a64e46719a"
     },
     "_type": 0,
     "_sizeMode": 0,

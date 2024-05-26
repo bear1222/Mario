@@ -181,9 +181,11 @@ export default class ActorController extends Controller {
         }
         if(type == "Goomba"){
             contact.disabled = true;
-            if(this.noHurt)
+            console.log('hit goomba', normal.y);
+            if(!other.getComponent(Goomba).isAlive())
                 return;
-            if(!cmp(normal.x, 0) && other.getComponent(Goomba).isAlive()){
+            if(!cmp(normal.y, -1) && other.getComponent(Goomba).isAlive()){
+                if(this.noHurt) return;
                 if(this.small){
                     // lose one life
                     this.alive = false;
@@ -204,11 +206,12 @@ export default class ActorController extends Controller {
                     this.noHurt = true;
                     this.scheduleOnce(() => {
                         this.noHurt = false;
-                    }, 3);
+                    }, 1.1);
                     this.becomeBig(false);
                 }
             }else{
-                this._rigidbody.linearVelocity = cc.v2(0, this.jumpVel);
+                other.getComponent(Goomba).die();
+                this._rigidbody.linearVelocity = cc.v2(0, this.jumpVel - 100);
 //                this.updatePoints(100, other.node.x, other.node.y + 32);
                 this.gameManager.playStompSE();
             }

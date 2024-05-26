@@ -127,9 +127,13 @@
     "dieFrame": {
       "__uuid__": "1364467a-449c-469e-b289-b66f496b1992"
     },
+    "direction": "right",
     "moveSpeed": 65,
     "gameManager": null,
-    "addPointsPrefab": null,
+    "addPointsPrefab": {
+      "__uuid__": "020af8c6-6cee-4dda-9c90-2f599128e489"
+    },
+    "player": null,
     "_id": ""
   },
   {
@@ -151,7 +155,7 @@
       "y": 0
     },
     "_angularVelocity": 0,
-    "_fixedRotation": false,
+    "_fixedRotation": true,
     "enabledContactListener": true,
     "bullet": false,
     "awakeOnLoad": true,
