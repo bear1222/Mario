@@ -60,7 +60,7 @@
 
 ## Advanced Component Description : 
 
-* Firebase login
+* Firebase login/signup
 * Save game state  
     when player die, he can choose to continue game or quit   
     (use &uarr; and &darr; to control, press 'enter' to confirm)

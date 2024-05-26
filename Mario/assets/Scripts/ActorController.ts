@@ -147,6 +147,10 @@ export default class ActorController extends Controller {
             contact.disabled = true;
             return;
         }
+        if(type == 'box_0'){
+            contact.disabled = true;
+            return;
+        }
         if(type == "mushroom"){
             other.node.destroy();
             this.becomeBig(true);
